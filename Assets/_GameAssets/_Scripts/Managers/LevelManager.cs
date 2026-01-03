@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public static LevelManager Instance;
+    void Awake(){
+        Instance = this;
+    }
     void Start()
     {
         
@@ -14,5 +17,9 @@ public class LevelManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void standPointTriggered(StandPoint.PointNo pointNo){
+
     }
 }
