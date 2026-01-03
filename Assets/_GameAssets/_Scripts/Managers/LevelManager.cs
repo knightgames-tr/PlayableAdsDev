@@ -16,6 +16,7 @@ public class LevelManager : MonoBehaviour
     {
         _playerController = PlayerController.Instance;
         ((PaymentPoint)_standPoints[0]).activatePaymentPoint();
+        
     }
 
     // Update is called once per frame
@@ -29,11 +30,11 @@ public class LevelManager : MonoBehaviour
     public List<StandPoint> _standPoints;
 
     public void onStandPoint(int pointNo){
-
+        _playerController.stopObjectivePointer();
     }    
     
     public void offStandPoint(int pointNo){
-
+        _playerController.startObjectivePointer(_standPoints[pointNo].transform);
     }
 
     public void donePaymentPoint(int pointNo){
@@ -50,6 +51,7 @@ public class LevelManager : MonoBehaviour
             float _part2SpawnTime = 0.5f;
             void activatePart2Environment(){
                 _playerController.togglePlayerController(false);
+                _playerController.stopObjectivePointer();
                 _part2Camera.Priority += 2;
 
                 float delay = 0.75f;
@@ -63,6 +65,9 @@ public class LevelManager : MonoBehaviour
                     .OnComplete(()=>{
                         _part2Camera.Priority -= 2;
                         _playerController.togglePlayerController(true);
+                        _standPoints[1].togglePoint(true);
+                        ((ActionPoint)_standPoints[1]).highLightActionPoint();
+                        _playerController.startObjectivePointer(_standPoints[1].transform);
                         });
             }
 

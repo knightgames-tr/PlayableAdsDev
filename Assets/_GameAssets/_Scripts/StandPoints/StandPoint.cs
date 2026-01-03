@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using MyBox;
 
 public class StandPoint : MonoBehaviour
 {
 
     public int _pointNo;
-
+    [Separator]
+    
     protected GameManager _gameManager;
     protected LevelManager _levelManager;
     public virtual void Start(){
