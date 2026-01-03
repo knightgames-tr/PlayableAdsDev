@@ -19,7 +19,11 @@ public class LevelManager : MonoBehaviour
         
     }
 
-    public void standPointTriggered(StandPoint.PointNo pointNo){
+    public void onStandPoint(){
+
+    }    
+    
+    public void offStandPoint(){
 
     }
 }

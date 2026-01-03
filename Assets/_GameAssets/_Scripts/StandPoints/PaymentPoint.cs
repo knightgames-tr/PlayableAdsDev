@@ -1,18 +1,76 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using MyBox;
+using DG.Tweening;
 
-public class PaymentPoint : MonoBehaviour
+public class PaymentPoint : StandPoint
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    public override void Start(){
+        base.Start();
+        _currentPrice = _pointPrice;
+        _priceText.text = _pointPrice+"";
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    void Update(){
+        if(_isStanding){
+            paymentTimer();
+        }
+    }
+
+    [Header ("Payment Point Settings")]
+    public int _pointPrice = 50;
+    public TextMeshProUGUI _priceText;
+    public Image _priceFiller;
+    public Image _moneyIcon;
+    public Image _pointIcon;
+    public Renderer _arrowMesh;
+
+    float _currentPrice;
+    float _maxTimer = 0.01f;
+    float _timer;
+    void paymentTimer(){
+        _timer += Time.deltaTime;
+
+        if(_timer > _maxTimer){
+            _timer = 0;
+
+            if(_gameManager.updateMoney(-1)){
+                //Update price
+                _currentPrice -= 1;
+
+                //Update text and filler
+                _priceText.text = _currentPrice+"";
+                _priceFiller.fillAmount = (_pointPrice-_currentPrice) / _pointPrice;
+
+                //Check if done
+                if(_currentPrice == 0){
+                    donePaymentPoint();
+                }
+
+            }else{
+                _isStanding = false;
+                _levelManager.offStandPoint();
+            }
+        }
+    }
+
+    float _fadeTime = 1f;
+    public void activatePaymentPoint(){
+        _priceText.DOFade(1,_fadeTime);
+        _priceFiller.DOFade(1,_fadeTime);
+        _moneyIcon.DOFade(1,_fadeTime);
+        _pointIcon.DOFade(1,_fadeTime);
+        _arrowMesh.material.DOFade(1,_fadeTime);
+    }
+
+    public void donePaymentPoint(){
+        togglePoint(false);
+        _isStanding = false;
+        _levelManager.offStandPoint();
+
+        transform.DOScale(0,0.5f);
     }
 }

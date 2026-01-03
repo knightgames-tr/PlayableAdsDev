@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public static GameManager Instance;
+    void Awake(){
+        Instance = this;
+    }
     void Start()
     {
         
@@ -15,4 +20,22 @@ public class GameManager : MonoBehaviour
     {
         
     }
+
+    #region Money
+
+        int _currentMoney = 50;
+        public TextMeshProUGUI _moneyText;
+
+        public bool updateMoney(int changeAmount){
+            if(_currentMoney+changeAmount < 0){
+                return false;
+            }
+
+            _currentMoney += changeAmount;
+            _moneyText.text = _currentMoney+"";
+
+            return true;
+        }
+
+    #endregion
 }
