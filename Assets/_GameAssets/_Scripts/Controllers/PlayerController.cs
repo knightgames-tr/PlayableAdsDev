@@ -4,30 +4,45 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Joystick _joystick;
-    bool _movementActive = true;
-    public float speed = 5f;
-    public float gravity = -9.81f;
-
-    private CharacterController controller;
-    private Vector3 velocity;
-    void Start()
-    {
-        
-        controller = GetComponent<CharacterController>();
+    public static PlayerController Instance;
+    void Awake(){
+        Instance = this;
+    }
+    void Start(){
+        _characterController = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-        float x = _joystick.Horizontal; // A - D
-        float z = _joystick.Vertical;   // W - S
+    void Update(){
+        if(_playerControllerActive){
+            movePlayer();
+        }
+    }
 
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * speed * Time.deltaTime);
+    public Joystick _joystick;
+    CharacterController _characterController;
 
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+    bool _playerControllerActive = true;
+    public void togglePlayerController(bool value){
+        _playerControllerActive = value;
+        _joystick.enabled = value;
+    }
+
+    
+    public Transform _playerModel;
+    public Animator _playerAnimator;
+
+    float _moveSpeed = 5f;
+    float _rotateSpeed = 3f;
+    void movePlayer(){
+        //Move player
+        Vector3 move = transform.right * _joystick.Horizontal + transform.forward * _joystick.Vertical;
+        if(move.magnitude < 0.01){
+            return;
+        }
+        _characterController.Move(move * _moveSpeed * Time.deltaTime);
+
+        //Rotate player to move vector, using slerp
+        Quaternion targetRot = Quaternion.LookRotation(move);
+        _playerModel.rotation = Quaternion.Slerp(_playerModel.rotation,targetRot,_rotateSpeed * Time.deltaTime);
     }
 }

@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using DG.Tweening;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -8,9 +10,12 @@ public class LevelManager : MonoBehaviour
     void Awake(){
         Instance = this;
     }
+
+    PlayerController _playerController;
     void Start()
     {
-        
+        _playerController = PlayerController.Instance;
+        ((PaymentPoint)_standPoints[0]).activatePaymentPoint();
     }
 
     // Update is called once per frame
@@ -19,11 +24,49 @@ public class LevelManager : MonoBehaviour
         
     }
 
-    public void onStandPoint(){
+    #region Stand Points
+
+    public List<StandPoint> _standPoints;
+
+    public void onStandPoint(int pointNo){
 
     }    
     
-    public void offStandPoint(){
+    public void offStandPoint(int pointNo){
 
     }
+
+    public void donePaymentPoint(int pointNo){
+        if(pointNo == 0){
+            activatePart2Environment();
+        }
+    }
+
+        #region Point Specific Actions
+
+            [Header ("Part 2 Objects")]
+            public List<Transform> _part2Environment;
+            public CinemachineVirtualCamera _part2Camera;
+            float _part2SpawnTime = 0.5f;
+            void activatePart2Environment(){
+                _playerController.togglePlayerController(false);
+                _part2Camera.Priority += 2;
+
+                float delay = 0.75f;
+                for(int i=0;i<_part2Environment.Count-1;i++){
+                    _part2Environment[i].DOScale(1,_part2SpawnTime).SetDelay(delay);
+                    delay += _part2SpawnTime;
+                }
+
+                _part2Environment[_part2Environment.Count-1].DOScale(1,_part2SpawnTime)
+                    .SetDelay(delay)
+                    .OnComplete(()=>{
+                        _part2Camera.Priority -= 2;
+                        _playerController.togglePlayerController(true);
+                        });
+            }
+
+        #endregion
+
+    #endregion
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,6 +6,8 @@ using UnityEngine;
 
 public class StandPoint : MonoBehaviour
 {
+
+    public int _pointNo;
 
     protected GameManager _gameManager;
     protected LevelManager _levelManager;
@@ -26,7 +29,7 @@ public class StandPoint : MonoBehaviour
                 return;
             }
             _isStanding = true;
-            _levelManager.onStandPoint();
+            _levelManager.onStandPoint(_pointNo);
         }
     }
 
@@ -36,7 +39,7 @@ public class StandPoint : MonoBehaviour
                 return;
             }
             _isStanding = false;
-            _levelManager.offStandPoint();
+            _levelManager.offStandPoint(_pointNo);
         }
     }
 }

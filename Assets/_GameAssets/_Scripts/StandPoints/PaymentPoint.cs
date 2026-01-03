@@ -29,7 +29,7 @@ public class PaymentPoint : StandPoint
     public Renderer _arrowMesh;
 
     float _currentPrice;
-    float _maxTimer = 0.025f;
+    float _maxTimer = 0.01f;
     float _timer;
     void paymentTimer(){
         _timer += Time.deltaTime;
@@ -52,7 +52,7 @@ public class PaymentPoint : StandPoint
 
             }else{
                 _isStanding = false;
-                _levelManager.offStandPoint();
+                _levelManager.offStandPoint(_pointNo);
             }
         }
     }
@@ -72,7 +72,8 @@ public class PaymentPoint : StandPoint
     public void donePaymentPoint(){
         togglePoint(false);
         _isStanding = false;
-        _levelManager.offStandPoint();
+        _levelManager.offStandPoint(_pointNo);
+        _levelManager.donePaymentPoint(_pointNo);
 
         transform.DOScale(0,0.5f);
     }
