@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NPCController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    LevelManager _levelManager;
     void Start()
     {
         
@@ -16,7 +16,24 @@ public class NPCController : MonoBehaviour
         
     }
 
-    public void moveToPosition(Vector3 targetPosition){
 
+    public void toggleNavmeshAgent(bool toggle){
+
+    }
+
+    int _currentQueueNo = -1;
+    int _currentLineNo = -1;
+    public void moveToPosition(Vector3 targetPosition, int queueNo, int lineNo){
+        toggleNavmeshAgent(true);
+        
+        _currentQueueNo = queueNo;
+        _currentLineNo = lineNo;
+    }
+
+    public void reachedQueuePosition(){
+        _levelManager.reachedQueuePosition(_currentQueueNo, _currentLineNo, this);
+    }
+    public void reachedQueuePosition(int queueNo){
+        _levelManager.reachedQueuePosition(queueNo, _currentLineNo, this);
     }
 }

@@ -6,7 +6,7 @@ public class LineController : MonoBehaviour
 {
     public int _lineNo;
     LevelManager _levelManager;
-    void Start()
+    public virtual void Start()
     {   
         _levelManager = LevelManager.Instance;
         _queue = new List<NPCController>();
@@ -32,13 +32,13 @@ public class LineController : MonoBehaviour
 
         //Move other items of the queue to positions
         for(int i=0;i<_queue.Count;i++){
-            _queue[i].moveToPosition(transform.position + transform.forward*i*_queueOffset);
+            _queue[i].moveToPosition(transform.position + transform.forward*i*_queueOffset,i,_lineNo);
         }
     }
 
     public void addNPCToLine(NPCController npc){
         _queue.Add(npc);
-        _queue[_queue.Count-1].moveToPosition(transform.position + transform.forward*(_queue.Count-1)*_queueOffset);
+        _queue[_queue.Count-1].moveToPosition(transform.position + transform.forward*(_queue.Count-1)*_queueOffset,_queue.Count-1,_lineNo);
 
         if(!_isLineActive){
             _isLineActive = true;

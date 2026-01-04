@@ -75,7 +75,7 @@ public class LevelManager : MonoBehaviour
                         foreach(StairController stair in _part2Stairs){
                             stair.startStairMovement();
                         }
-                        });
+                    });
             }
 
         #endregion
@@ -86,6 +86,10 @@ public class LevelManager : MonoBehaviour
 
         public void processLine(int lineNo, NPCController npc){
             
+        }
+
+        public void reachedQueuePosition(int queueNo, int lineNo, NPCController npc){
+
         }
 
     #endregion

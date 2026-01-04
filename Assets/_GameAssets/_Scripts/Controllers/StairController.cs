@@ -5,18 +5,16 @@ using UnityEngine;
 
 public class StairController : MonoBehaviour
 {
+    public int _lineNo;
     PlayerController _playerController;
     LevelManager _levelManager;
     void Start()
     {
         _playerController = PlayerController.Instance;
         _levelManager = LevelManager.Instance;
-        initStepPositions();
-    }
 
-    void Update()
-    {
-        
+        _stairQueue = new List<Transform>();
+        initStepPositions();
     }
 
     public Transform _startStep;
@@ -53,24 +51,43 @@ public class StairController : MonoBehaviour
         .OnComplete(()=>{stepReached();});
     }
 
+    List<Transform> _stairQueue;
+    public void addToStairQueue(Transform item){
+        _stairQueue.Add(item);
+
+        if(item.tag == "Player"){
+            _playerController.togglePlayerController(false);
+            _playerController.stopObjectivePointer();
+        }else if(item.tag == "NPC"){
+            item.GetComponent<NPCController>().toggleNavmeshAgent(false);
+        }
+    }
     void stepReached(){
+        //Move each item to upper step
         for(int i=0;i<_steps.Count;i++){
             if(_steps[i].childCount > 0){
                 if(i == _stepCount-1){
-                    //Stair completed for character,move to next pos
-                    Transform character = _steps[i].GetChild(0);
-                    character.parent = null;
-                    character.transform.position = _donePosition.position;
-                    if(character.tag == "Player"){
+                    //Stair completed for item,move to next pos
+                    Transform item = _steps[i].GetChild(0);
+                    item.parent = null;
+                    item.transform.position = _donePosition.position;
+
+                    if(item.tag == "Player"){
                         _playerController.togglePlayerController(true);
                         _playerController.startObjectivePointer();
-                    }else if(character.tag == "NPC"){
-                        character.GetComponent<NPCController>().
+                    }else if(item.tag == "NPC"){
+                        item.GetComponent<NPCController>().reachedQueuePosition(0);
                     }
                 }else{
                     _steps[i].GetChild(0).parent = _steps[i+1];
                 }
             }
+        }
+
+        //Add new item from queue
+        if(_stairQueue.Count > 0){
+            _stairQueue[0].transform.parent = _steps[0];
+            _stairQueue.RemoveAt(0);
         }
     }
 }
