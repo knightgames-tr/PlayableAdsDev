@@ -84,7 +84,12 @@ public class StairController : MonoBehaviour
 
         //Add new item from queue
         if(_stairQueue.Count > 0){
+            //Toggle navmesh agent if npc
+            if(_stairQueue[0].tag == "NPC"){
+                _stairQueue[0].GetComponent<NPCController>().toggleNPCAgent(false);
+            }
             _stairQueue[0].transform.parent = _steps[0];
+            _stairQueue[0].transform.localPosition = Vector3.zero;
             _stairQueue.RemoveAt(0);
         }
     }

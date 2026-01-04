@@ -24,6 +24,10 @@ public class StandPoint : MonoBehaviour
     }
 
     protected bool _isStanding;
+    public bool getIsStanding(){
+        return _isStanding;
+    }
+    
 
     void OnTriggerEnter(Collider other) {
         if(other.transform.tag == "Player"){

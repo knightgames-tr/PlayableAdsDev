@@ -11,7 +11,6 @@ public class NPCController : MonoBehaviour
         _levelManager = LevelManager.Instance;
 
         _npcAgent = GetComponent<NavMeshAgent>();
-        toggleNPCAgent(false);
     }
 
     void Update(){
@@ -51,7 +50,6 @@ public class NPCController : MonoBehaviour
         void reachedDestination(){
             _arrived = true;
             _movement = false;
-            toggleNPCAgent(false);
 
             reachedQueuePosition();
 

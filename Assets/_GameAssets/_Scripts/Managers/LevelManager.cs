@@ -39,16 +39,12 @@ public class LevelManager : MonoBehaviour
             _playerController.stopObjectivePointer();
 
             if(pointNo == 1){
-                _standPointRoutine = StartCoroutine(processStandPoint1());
+                StartCoroutine(processStandPoint1());
             }
         }    
         
         public void offStandPoint(int pointNo){
             _playerController.startObjectivePointer(_standPoints[pointNo].transform);
-
-            if(_standPointRoutine != null){
-                StopCoroutine(_standPointRoutine);
-            }
         }
 
         public void donePaymentPoint(int pointNo){
@@ -96,11 +92,14 @@ public class LevelManager : MonoBehaviour
                     });
             }
 
-            Coroutine _standPointRoutine;
-            float _standPoint1WaitTime = 1f;
+            float _standPoint1WaitTime = 0.3f;
             IEnumerator processStandPoint1(){
                 while(true){
                     if(!_lines[0]._isLineActive){
+                        yield break;
+                    }
+
+                    if(!_standPoints[1].getIsStanding()){
                         yield break;
                     }
 
@@ -108,9 +107,10 @@ public class LevelManager : MonoBehaviour
                         yield return new WaitForSeconds(_standPoint1WaitTime);
                     }else{
                         _lineReadyNPC[0]._baggage.parent = _playerController.transform;
-                        _lineReadyNPC[0]._baggage.DOLocalMove(_playerController.transform.localPosition,1f);
+                        _lineReadyNPC[0]._baggage.DOLocalMove(Vector3.zero,1f);
                         yield return new WaitForSeconds(1f);
                         _lines[1].addNPCToLine(_lineReadyNPC[0]);
+                        _lineReadyStates[0] = false;
                         _lines[0].processQueue();
                     }
 
