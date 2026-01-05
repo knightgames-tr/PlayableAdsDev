@@ -15,11 +15,16 @@ public class StairController : MonoBehaviour
         initStepPositions();
     }
 
+    public Collider _stairPlayerCollider;
+    public void toggleForPlayer(bool value){
+        _stairPlayerCollider.enabled = value;
+    }
+
     public Transform _startStep;
     public Transform _endStep;
     public Transform _donePosition;
     List<Transform> _steps;
-    int _stepCount = 10;
+    int _stepCount = 17;
     void initStepPositions(){
         _steps = new List<Transform>();
 
@@ -38,7 +43,7 @@ public class StairController : MonoBehaviour
         transform.localScale = Vector3.zero;
     }
 
-    float _stepSpeed = 0.7f;
+    float _stepSpeed = 0.2f;
     public void startStairMovement(){
         for(int i=0;i<_steps.Count-1;i++){
             Vector3 movePosition = Vector3.Lerp(_startStep.position,_endStep.position,(i+1f)/_stepCount);

@@ -19,7 +19,7 @@ public class StandPoint : MonoBehaviour
     }
 
     protected bool _isStandPointActive{get;private set;} = false;
-    public void togglePoint(bool value){
+    public virtual void togglePoint(bool value){
         _isStandPointActive = value;
     }
 
@@ -27,7 +27,6 @@ public class StandPoint : MonoBehaviour
     public bool getIsStanding(){
         return _isStanding;
     }
-    
 
     void OnTriggerEnter(Collider other) {
         if(other.transform.tag == "Player"){

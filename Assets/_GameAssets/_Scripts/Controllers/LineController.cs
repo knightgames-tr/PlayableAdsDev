@@ -29,6 +29,7 @@ public class LineController : MonoBehaviour
 
         if(_queue.Count == 0){
             _isLineActive = false;
+            _levelManager.lineCompleted(_lineNo);
             return;
         }
 

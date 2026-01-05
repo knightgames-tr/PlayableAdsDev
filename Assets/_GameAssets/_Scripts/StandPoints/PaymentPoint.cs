@@ -47,7 +47,7 @@ public class PaymentPoint : StandPoint
 
                 //Check if done
                 if(_currentPrice == 0){
-                    donePaymentPoint();
+                    togglePoint(false);
                 }
 
             }else{
@@ -57,24 +57,25 @@ public class PaymentPoint : StandPoint
         }
     }
 
+
     float _fadeTime = 1f;
     Ease _fadeEase = Ease.Linear;
-    [ContextMenu("Activate Point")]
-    public void activatePaymentPoint(){
-        togglePoint(true);
-        _priceText.DOFade(1,_fadeTime).SetEase(_fadeEase);
-        _moneyIcon.DOFade(1,_fadeTime).SetEase(_fadeEase);
-        _pointIcon.DOFade(1,_fadeTime).SetEase(_fadeEase);
-        _iconFiller.DOFade(1,_fadeTime).SetEase(_fadeEase);
-        _arrowMesh.material.DOFade(1,_fadeTime).SetEase(_fadeEase);
-    }
 
-    public void donePaymentPoint(){
-        togglePoint(false);
-        _isStanding = false;
-        _levelManager.offStandPoint(_pointNo);
-        _levelManager.donePaymentPoint(_pointNo);
+    public override void togglePoint(bool value)
+    {
+        base.togglePoint(value);
+        if(value){
+            _priceText.DOFade(1,_fadeTime).SetEase(_fadeEase);
+            _moneyIcon.DOFade(1,_fadeTime).SetEase(_fadeEase);
+            _pointIcon.DOFade(1,_fadeTime).SetEase(_fadeEase);
+            _iconFiller.DOFade(1,_fadeTime).SetEase(_fadeEase);
+            _arrowMesh.material.DOFade(1,_fadeTime).SetEase(_fadeEase);
+        }else{
+            _isStanding = false;
+            _levelManager.offStandPoint(_pointNo);
+            _levelManager.donePaymentPoint(_pointNo);
 
-        transform.DOScale(0,0.5f);
+            transform.DOScale(0,0.5f);
+        }
     }
 }

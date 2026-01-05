@@ -28,7 +28,14 @@ public class PlayerController : MonoBehaviour
     bool _playerControllerActive = true;
     public void togglePlayerController(bool value){
         _playerControllerActive = value;
-        _joystick.enabled = value;
+
+        if(value){
+            _joystick.enabled = value;
+            _joystick.OnPointerUp(null);
+        }else{
+            _joystick.OnPointerUp(null);
+            _joystick.enabled = value;
+        }
     }
 
     

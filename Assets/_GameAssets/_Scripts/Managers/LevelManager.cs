@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using DG.Tweening;
+using MyBox;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -19,7 +20,7 @@ public class LevelManager : MonoBehaviour
         initLineReadyStates();
 
         //Activate first payment point
-        ((PaymentPoint)_standPoints[0]).activatePaymentPoint();
+        _standPoints[0].togglePoint(true);
         
     }
 
@@ -40,6 +41,12 @@ public class LevelManager : MonoBehaviour
 
             if(pointNo == 1){
                 StartCoroutine(processStandPoint1());
+            }else if(pointNo == 2){
+                StartCoroutine(processStandPoint2());
+            }else if(pointNo == 3){
+                StartCoroutine(processStandPoint3());
+            }else if(pointNo == 4){
+                StartCoroutine(processStandPoint4());
             }
         }    
         
@@ -59,7 +66,7 @@ public class LevelManager : MonoBehaviour
             public List<Transform> _part2Environment;
             public CinemachineVirtualCamera _part2Camera;
             public List<StairController> _part2Stairs;
-            float _part2SpawnTime = 0.5f;
+            float _part2SpawnTime = 0.2f;
             void activatePart2Environment(){
                 _playerController.togglePlayerController(false);
                 _playerController.stopObjectivePointer();
@@ -78,7 +85,6 @@ public class LevelManager : MonoBehaviour
                         _part2Camera.Priority -= 2;
                         _playerController.togglePlayerController(true);
                         _standPoints[1].togglePoint(true);
-                        ((ActionPoint)_standPoints[1]).highLightActionPoint();
                         _playerController.startObjectivePointer(_standPoints[1].transform);
 
                         //Start stair movement
@@ -92,7 +98,9 @@ public class LevelManager : MonoBehaviour
                     });
             }
 
-            float _standPoint1WaitTime = 0.3f;
+            [Separator]
+            public Transform _baggageParent;
+            float _standPoint1WaitTime = 0.1f;
             IEnumerator processStandPoint1(){
                 while(true){
                     if(!_lines[0]._isLineActive){
@@ -106,12 +114,90 @@ public class LevelManager : MonoBehaviour
                     if(_lineReadyStates[0] == false){
                         yield return new WaitForSeconds(_standPoint1WaitTime);
                     }else{
-                        _lineReadyNPC[0]._baggage.parent = _playerController.transform;
+                        _lineReadyNPC[0]._baggage.parent = _baggageParent.transform;
                         _lineReadyNPC[0]._baggage.DOLocalMove(Vector3.zero,1f);
                         yield return new WaitForSeconds(1f);
                         _lines[1].addNPCToLine(_lineReadyNPC[0]);
                         _lineReadyStates[0] = false;
                         _lines[0].processQueue();
+                    }
+
+                }
+            }
+
+            public Transform _baggagePut;
+            float _standPoint2WaitTime = 0.3f;
+            float _childCount;
+            IEnumerator processStandPoint2(){
+                while(true){
+                    if(!_standPoints[2].getIsStanding()){
+                        yield break;
+                    }
+
+                    if(_baggageParent.childCount < 1){
+                        //Line completed
+                        _standPoints[2].togglePoint(false);
+                        _standPoints[3].togglePoint(true);
+                        _playerController.startObjectivePointer(_standPoints[3].transform);
+                        _childCount = 0;
+                        yield break;
+                    }
+
+                    Transform child = _baggageParent.GetChild(0);
+                    child.parent = _baggagePut.transform;
+                    child.DOLocalMove(new Vector3(0,_childCount,0),_standPoint2WaitTime);
+                    _childCount++;
+                    yield return new WaitForSeconds(_standPoint2WaitTime);
+                }
+            }
+
+            float _standPoint3WaitTime = 0.3f;
+            public Transform _truck;
+            IEnumerator processStandPoint3(){
+                while(true){
+                    if(!_standPoints[3].getIsStanding()){
+                        yield break;
+                    }
+
+                    if(_baggagePut.childCount < 1){
+                        //Line completed
+                        _standPoints[3].togglePoint(false);
+                        _standPoints[4].togglePoint(true);
+                        _playerController.startObjectivePointer(_standPoints[3].transform);
+
+                        foreach(StairController stair in _part2Stairs){
+                            stair.toggleForPlayer(true);
+                        }
+                        yield break;
+                    }
+
+                    Transform child = _baggagePut.GetChild(0);
+                    child.parent = _truck.transform;
+                    child.DOLocalMove(new Vector3(0,_childCount,0),_standPoint3WaitTime);
+                    _childCount++;
+                    yield return new WaitForSeconds(_standPoint2WaitTime);
+                }
+            }
+
+            public Transform _plane;
+            float _standPoint4WaitTime = 0.1f;
+            IEnumerator processStandPoint4(){
+                while(true){
+                    if(!_lines[2]._isLineActive){
+                        yield break;
+                    }
+
+                    if(!_standPoints[4].getIsStanding()){
+                        yield break;
+                    }
+
+                    if(_lineReadyStates[2] == false){
+                        yield return new WaitForSeconds(_standPoint4WaitTime);
+                    }else{
+                        _lines[3].addNPCToLine(_lineReadyNPC[0]);
+                        _lineReadyStates[2] = false;
+                        _lines[2].processQueue();
+                        yield return new WaitForSeconds(1f);
                     }
 
                 }
@@ -139,8 +225,19 @@ public class LevelManager : MonoBehaviour
                 //Process stair
                 if(lineNo == 1){
                     putNPCToStair(npc.transform);
+                }else if(lineNo == 3){
+                    Destroy(npc.gameObject);
                 }
             }
+        }
+
+        public void lineCompleted(int lineNo){
+            if(lineNo == 0){
+                _standPoints[1].togglePoint(false);
+                _standPoints[2].togglePoint(true);
+                _playerController.startObjectivePointer(_standPoints[2].transform);
+            }
+
         }
 
         #region Line Specific Actions
