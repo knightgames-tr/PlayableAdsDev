@@ -184,6 +184,7 @@ public class LevelManager : MonoBehaviour
             IEnumerator processStandPoint4(){
                 while(true){
                     if(!_lines[2]._isLineActive){
+                        _standPoints[5].togglePoint(true);
                         yield break;
                     }
 
@@ -194,7 +195,7 @@ public class LevelManager : MonoBehaviour
                     if(_lineReadyStates[2] == false){
                         yield return new WaitForSeconds(_standPoint4WaitTime);
                     }else{
-                        _lines[3].addNPCToLine(_lineReadyNPC[0]);
+                        _lines[3].addNPCToLine(_lineReadyNPC[2]);
                         _lineReadyStates[2] = false;
                         _lines[2].processQueue();
                         yield return new WaitForSeconds(1f);
@@ -227,6 +228,7 @@ public class LevelManager : MonoBehaviour
                     putNPCToStair(npc.transform);
                 }else if(lineNo == 3){
                     Destroy(npc.gameObject);
+                    _lines[3].processQueue();
                 }
             }
         }

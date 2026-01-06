@@ -94,9 +94,6 @@ public class NPCController : MonoBehaviour
     }
 
     public void reachedQueuePosition(){
-        if(_currentQueueNo != 0){
-            return;
-        }
         _levelManager.reachedQueuePosition(_currentQueueNo, _currentLineNo, this);
     }
     public void reachedStairTop(){
