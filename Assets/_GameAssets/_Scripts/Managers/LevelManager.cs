@@ -127,9 +127,10 @@ public class LevelManager : MonoBehaviour
 
                         //Put baggage under player transform
                         Transform baggage = _lineReadyNPC[0]._baggage;
+
                         _baggages.Add(baggage);
                         baggage.parent = null;
-                        baggage.DOJump(_baggagePlayerParent.transform.position+new Vector3(0,_baggages.IndexOf(baggage)*_baggageOffset,0),3,1,0.4f).OnComplete(()=>{
+                        baggage.DOJump(_baggagePlayerParent.transform.position*0.95f+new Vector3(0,_baggages.IndexOf(baggage)*_baggageOffset,0),2f,1,0.4f).OnComplete(()=>{
                             baggage.DOMoveInTargetLocalSpace(_baggagePlayerParent.transform,new Vector3(0,_baggages.IndexOf(baggage)*_baggageOffset,0),0.1f).OnComplete(()=>{
                                 baggage.parent = _baggagePlayerParent.transform;
                                 baggage.DOLocalRotate(new Vector3(0,0,90),0.5f);
@@ -138,7 +139,7 @@ public class LevelManager : MonoBehaviour
 
                         _lineReadyNPC[0].toggleBaggageCarry(false);
 
-                        yield return new WaitForSeconds(0.4f);
+                        yield return new WaitForSeconds(0.3f);
 
                         _playerController.toggleBaggageCarry(true);
                         _lines[1].addNPCToLine(_lineReadyNPC[0]);
@@ -176,10 +177,10 @@ public class LevelManager : MonoBehaviour
                 }
             }
 
-            float _standPoint3WaitTime = 1.2f;
+            float _standPoint3WaitTime = 0.6f;
             public Transform _baggageJumpPosition;
             public Transform _jumpPadObject;
-            public Transform _truck;
+            public Transform _truckBaggagePosition;
             IEnumerator processStandPoint3(){
                 while(true){
                     if(!_standPoints[3].getIsStanding()){
@@ -199,29 +200,40 @@ public class LevelManager : MonoBehaviour
                         yield break;
                     }
 
+                    //Move upper baggages one step down
                     for(int i=_currentBaggageIndex-1;i>-1;i--){
                         _baggages[i].DOMove(_baggages[i+1].position,_standPoint3WaitTime/3);
                     }
 
+                    //Move current baggage to the truck
                     Sequence baggageSequence = DOTween.Sequence();
                     baggageSequence.Append(_baggages[_currentBaggageIndex].DOMove(_baggageJumpPosition.position,_standPoint3WaitTime/3))
                     .Append(_baggages[_currentBaggageIndex].DOJump(_jumpPadObject.position,1,1,_standPoint3WaitTime/3))
-                    .Append(_baggages[_currentBaggageIndex].DOJump(_truck.position+new Vector3(0,_baggageOffset*(_baggages.Count-1-_currentBaggageIndex),0),3,1,(_standPoint3WaitTime/3)*2))
+                    .Append(_baggages[_currentBaggageIndex].DOJump(_truckBaggagePosition.position+new Vector3(0,_baggageOffset*(_baggages.Count-1-_currentBaggageIndex),0),3,1,(_standPoint3WaitTime/3)*2))
                     .OnComplete(()=>{
-                            _baggages[_currentBaggageIndex].parent = _truck;
+                            _baggages[_currentBaggageIndex].parent = _truckBaggagePosition;
                             _currentBaggageIndex--;
                     });
 
-
+                    //Move jumppad up and down
                     _jumpPadObject.DOMove(_jumpPadObject.position+new Vector3(0,2,0),_standPoint3WaitTime/3).SetDelay((_standPoint3WaitTime/3)*2).OnComplete(()=>{
                         _jumpPadObject.DOMove(_jumpPadObject.position-new Vector3(0,2,0),_standPoint3WaitTime/3);
                     });
+
                     yield return new WaitForSeconds(_standPoint3WaitTime*(5/3f));
                 }
             }
 
+            public Transform _truck;
+            float _truckMoveAmount = -20f;
             void moveTruckAway(){
-
+                _truck.DOLocalMoveZ(_truck.position.z+_truckMoveAmount,2f).OnComplete(()=>{
+                    _truck.DOLocalMoveZ(_truck.position.z-_truckMoveAmount,2f);
+                    int baggageCount = _baggages.Count;
+                    for(int i=0;i<baggageCount;i++){
+                        Destroy(_baggages[i].gameObject);
+                    }
+                });
             }
 
             public Transform _plane;
