@@ -114,8 +114,10 @@ public class LevelManager : MonoBehaviour
                     if(_lineReadyStates[0] == false){
                         yield return new WaitForSeconds(_standPoint1WaitTime);
                     }else{
-                        _lineReadyNPC[0]._baggage.parent = _baggageParent.transform;
-                        _lineReadyNPC[0]._baggage.DOLocalMove(Vector3.zero,1f);
+                        _lineReadyNPC[0]._baggage.parent = null;
+                        _lineReadyNPC[0]._baggage.DOMoveInTargetLocalSpace(_baggageParent.transform,Vector3.zero,1f).OnComplete(()=>{
+                            _lineReadyNPC[0]._baggage.parent = _baggageParent.transform;
+                        });
                         _lineReadyNPC[0].toggleBaggageCarry(false);
                         yield return new WaitForSeconds(1f);
                         _playerController.toggleBaggageCarry(true);

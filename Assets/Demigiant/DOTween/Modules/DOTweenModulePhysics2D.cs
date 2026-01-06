@@ -29,6 +29,17 @@ namespace DG.Tweening
             return t;
         }
 
+        public static TweenerCore<Vector3, Vector3, VectorOptions> DOMoveInTargetLocalSpace(this Transform transform, Transform target, Vector3 targetLocalEndPosition, float duration)
+        {
+            var t = DOTween.To(
+                () => transform.position - target.transform.position, // Value getter
+                x => transform.position = x + target.transform.position, // Value setter
+                targetLocalEndPosition, 
+                duration);
+            t.SetTarget(transform);
+            return t;
+        }
+
         /// <summary>Tweens a Rigidbody2D's X position to the given value.
         /// Also stores the Rigidbody2D as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
