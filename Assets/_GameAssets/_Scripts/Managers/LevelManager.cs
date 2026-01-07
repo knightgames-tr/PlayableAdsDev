@@ -79,16 +79,19 @@ public class LevelManager : MonoBehaviour
             public List<StairController> _part2Stairs;
             float _part2SpawnTime = 0.4f;
             void activatePart2Environment(){
+                //Activate part2 camera
                 _playerController.togglePlayerController(false);
                 _playerController.stopObjectivePointer();
                 _part2Camera.Priority += 2;
 
+                //Scale part2 objects
                 float delay = _part2SpawnTime;
                 for(int i=0;i<_part2Environment.Count-1;i++){
                     _part2Environment[i].DOScale(1,_part2SpawnTime).SetDelay(delay);
                     delay += _part2SpawnTime;
                 }
 
+                //After scaling last object, activate player
                 _part2Environment[_part2Environment.Count-1].DOScale(1,_part2SpawnTime)
                     .SetDelay(delay)
                     .OnComplete(()=>{
