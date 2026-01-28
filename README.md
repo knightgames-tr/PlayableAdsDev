@@ -8,8 +8,6 @@
 
 ### Unity 3D ve C# dili kullanılarak bir demo hazırlanmıştır.
 
-##### Hazırlayan: Ecem Özdoğan
-
 **Kullanılan Ek Assetler:** Dotween, Joystick pack 
 
 #### Geliştirme Notları:
